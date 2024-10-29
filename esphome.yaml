@@ -1,0 +1,98 @@
+esphome:
+  name: doorbell
+  friendly_name: doorbell
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "x="
+
+ota:
+  - platform: esphome
+    password: "x"
+
+mdns:
+  disabled: True
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Config for static IP
+  use_address: 10.10.1.89
+  manual_ip:
+    static_ip: 10.10.1.89
+    gateway: 10.10.1.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "doorbell Fallback Hotspot"
+    password: "x"
+
+captive_portal:
+
+switch:
+  - platform: gpio
+    pin: D1
+    id: "doorbell_opener_switch"
+  # - platform: gpio
+  #   pin: D2
+  #   id: "doorbell_speak_switch"
+  # - platform: gpio
+  #   pin: D6
+  #   id: "doorbell_light_switch"
+  # - platform: gpio
+  #   pin: D5
+  #   id: "doorbell_mute_switch"
+
+button:
+  - platform: template
+    name: "doorbell opener"
+    id: "doorbell_opener"
+    on_press:
+      - then:
+        - homeassistant.event: 
+            event: esphome.doorbell_opener
+        - switch.turn_on: doorbell_opener_switch
+        - delay: 1s
+        - switch.turn_off: doorbell_opener_switch
+
+  # - platform: template
+  #   name: "doorbell speak"
+  #   id: "doorbell_speak"
+  #   on_press:
+  #     - then:
+  #       - homeassistant.event: 
+  #           event: esphome.doorbell_speak
+  #       - switch.turn_on: doorbell_speak_switch
+  #       - delay: 1s
+  #       - switch.turn_off: doorbell_speak_switch
+
+  # - platform: template
+  #   name: "doorbell light"
+  #   id: "doorbell_light"
+  #   on_press:
+  #     - then:
+  #       - homeassistant.event: 
+  #           event: esphome.doorbell_light
+  #       - switch.turn_on: doorbell_light_switch
+  #       - delay: 1s
+  #       - switch.turn_off: doorbell_light_switch
+
+  # - platform: template
+  #   name: "doorbell mute"
+  #   id: "doorbell_mute"
+  #   on_press:
+  #     - then:
+  #       - homeassistant.event: 
+  #           event: esphome.doorbell_mute
+  #       - switch.turn_on: doorbell_mute_switch
+  #       - delay: 1s
+  #       - switch.turn_off: doorbell_mute_switch
+
